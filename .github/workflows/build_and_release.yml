@@ -53,5 +53,10 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: web-ext-artifacts/*.xpi
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
