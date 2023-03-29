@@ -3,7 +3,7 @@ name: Build and Release
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build_and_release:
@@ -18,20 +18,27 @@ jobs:
       with:
         node-version: 16
 
-    - name: Install dependencies
-      run: npm ci
-
     - name: Install web-ext
       run: npm install --global web-ext
 
-    - name: Bump version using Conventional Commits
+    - name: Bump version
       id: version_bump
       uses: phips28/gh-action-bump-version@master
       with:
         tag-prefix: 'v'
-        version-file: manifest.json
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Update manifest.json with new version number
+      run: jq ".version = \"$(jq -r '.version' package.json)\"" manifest.json > manifest.json.tmp && mv manifest.json.tmp manifest.json
+
+    - name: Commit changes
+      run: |
+        git config --local user.email "actions@github.com"
+        git config --local user.name "GitHub Actions"
+        git add manifest.json
+        git commit -m "[skip ci] Update manifest.json"
+        git push --force-with-lease origin HEAD:main
 
     - name: Build XPI
       run: web-ext build
