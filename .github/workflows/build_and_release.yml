@@ -23,6 +23,9 @@ jobs:
     - name: Install web-ext
       run: npm install --global web-ext
 
+    - name: Install web-ext
+      run: npm install --global web-ext-submit
+
     - name: Bump version
       id: version_bump
       uses: phips28/gh-action-bump-version@master
@@ -46,18 +49,17 @@ jobs:
     - name: Build XPI
       run: web-ext build
 
+    - name: Submit to Mozilla
+      run: web-ext-submit
+      env:
+        WEB_EXT_API_KEY: ${{ secrets.WEB_EXT_API_KEY }}
+        WEB_EXT_API_SECRET: ${{ secrets.WEB_EXT_API_SECRET }}
+
     - name: Rename .zip to .xpi
       run: |
         for file in web-ext-artifacts/*.zip; do
           mv "$file" "${file%.zip}.xpi"
         done
-        
-    - name: Submit to Mozilla
-      run: web-ext submit
-      env:
-        WEB_EXT_API_KEY: ${{ secrets.WEB_EXT_API_KEY }}
-        WEB_EXT_API_SECRET: ${{ secrets.WEB_EXT_API_SECRET }}
-
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
