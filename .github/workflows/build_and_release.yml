@@ -1,0 +1,50 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build_and_release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install web-ext
+      run: npm install --global web-ext
+
+    - name: Bump version using Conventional Commits
+      id: version_bump
+      uses: phips28/gh-action-bump-version@master
+      with:
+        tag-prefix: 'v'
+        version-file: manifest.json
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build XPI
+      run: web-ext build
+
+    - name: Rename .zip to .xpi
+      run: |
+        for file in web-ext-artifacts/*.zip; do
+          mv "$file" "${file%.zip}.xpi"
+        done
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: web-ext-artifacts/*.xpi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
