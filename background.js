@@ -44,10 +44,12 @@ async function updateActiveTab(tabId, changeInfo, tab) {
       if (regex.test(tab.url)) {
         // browser.browserAction.setIcon({ path: 'icon.png', tabId: tab.id });
         // browser.browserAction.setTitle({ title: 'Tab Modifier', tabId: tab.id });
-        console.debug("Tab updated", tab.url, rule)
-        let updatedTitle = rule.prefix + ' ' + tab.title;
+        // console.debug("Tab updated", tab.url, rule)
+        if(tab.title.startsWith(rule.prefix)) {
+          break;
+        }
         browser.tabs.executeScript({
-          code: `document.title = "${updatedTitle}";`,
+          code: `document.title = "${rule.prefix} ${tab.title}";`,
         });
 
         break;
