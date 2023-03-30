@@ -37,14 +37,14 @@ jobs:
     - name: Update manifest.json with new version number
       run: jq ".version = \"$(jq -r '.version' package.json)\"" manifest.json > manifest.json.tmp && mv manifest.json.tmp manifest.json
 
-    - name: Commit changes
-      run: |
-        git config --local user.email "actions@github.com"
-        git config --local user.name "GitHub Actions"
-        git pull
-        git add manifest.json
-        git commit -m "[skip ci] Update manifest.json"
-        git push --force-with-lease origin HEAD:main
+    # - name: Commit changes
+    #   run: |
+    #     git config --local user.email "actions@github.com"
+    #     git config --local user.name "GitHub Actions"
+    #     git pull
+    #     git add manifest.json
+    #     git commit -m "[skip ci] Update manifest.json"
+    #     git push origin HEAD:main
 
     - name: Build XPI
       run: web-ext build
