@@ -25,7 +25,6 @@ const positions = [
 let currentPositionIndex = 1;
 
 function moveToNextPosition() {
-    console.log('moveToNextPosition'); 
     currentPositionIndex = (currentPositionIndex + 1) % positions.length;
     const newPosition = positions[currentPositionIndex];
     devBox.style.top = newPosition.top ?? 'auto';

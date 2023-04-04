@@ -1,9 +1,11 @@
 const configContainer = document.getElementById('config-container');
 const addConfigButton = document.getElementById('add-config');
+const saveButton = document.getElementById('save-config');
+const resetButton = document.getElementById('reset-config');
 
 function createConfigElement(config) {
   const configElement = document.createElement("div");
-  configElement.className = "grid grid-cols-5 gap-4 my-2";
+  configElement.className = "grid grid-cols-5 gap-4 my-2 config";
   configElement.id = config.id;
 
   const regexInput = document.createElement("input");
@@ -40,24 +42,32 @@ function createConfigElement(config) {
 }
 
 function saveConfigs() {
-  const configs = Array.from(document.querySelectorAll('.config')).map(configElement => {
+  console.log("save")
+  const rules = Array.from(document.querySelectorAll('.config')).map(configElement => {
     const inputs = configElement.querySelectorAll('input');
     return { regex: inputs[0].value, prefix: inputs[1].value, color: inputs[2].value };
   });
 
-  browser.storage.sync.set({ configs });
+  browser.storage.sync.set({ rules });
 }
 
 function loadConfigs() {
-  browser.storage.sync.get('configs').then(({ configs }) => {
-    if (!configs) return;
+  browser.storage.sync.get('rules').then(({ rules }) => {
+    if (!rules) return;
     configContainer.innerHTML = '';
-    configs.forEach(config => configContainer.appendChild(createConfigElement(config)));
+    rules.forEach(rule => configContainer.appendChild(createConfigElement(rule)));
   });
 }
+
+saveButton.addEventListener('click', saveConfigs);
+resetButton.addEventListener('click', () => {
+  browser.storage.sync.set({ rules: defaultRules });
+  loadConfigs();
+});
 
 addConfigButton.addEventListener('click', () => {
   configContainer.appendChild(createConfigElement({ regex: '', prefix: '', color: '#000000' }));
 });
 
+getRules();
 loadConfigs();
