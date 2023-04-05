@@ -1,6 +1,6 @@
 const configContainer = document.getElementById('config-container');
 const addConfigButton = document.getElementById('add-config');
-const saveButton = document.getElementById('save-config');
+// const saveButton = document.getElementById('save-config');
 const resetButton = document.getElementById('reset-config');
 
 function createConfigElement(config) {
@@ -42,7 +42,6 @@ function createConfigElement(config) {
 }
 
 function saveConfigs() {
-  console.log("save")
   const rules = Array.from(document.querySelectorAll('.config')).map(configElement => {
     const inputs = configElement.querySelectorAll('input');
     return { regex: inputs[0].value, prefix: inputs[1].value, color: inputs[2].value };
@@ -59,11 +58,11 @@ function loadConfigs() {
   });
 }
 
-saveButton.addEventListener('click', saveConfigs);
-resetButton.addEventListener('click', () => {
-  browser.storage.sync.set({ rules: defaultRules });
-  loadConfigs();
-});
+// saveButton.addEventListener('click', saveConfigs);
+// resetButton.addEventListener('click', () => {
+//   browser.storage.sync.set({ rules: defaultRules });
+//   loadConfigs();
+// });
 
 addConfigButton.addEventListener('click', () => {
   configContainer.appendChild(createConfigElement({ regex: '', prefix: '', color: '#000000' }));
